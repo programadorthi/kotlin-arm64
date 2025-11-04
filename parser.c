@@ -271,24 +271,4 @@ AST *ast_function(FILE *file) {
   return ast;
 }
 
-int main(void) {
-  FILE *file = fopen("01-helloworld.kt", "r");
-  if (file == NULL) {
-    fprintf(stderr, "Kotlin file not found");
-    exit(1);
-  }
-
-  AST *ast = NULL;
-  TokenType t = getToken(file);
-  if (t == Key_Fun) {
-    ast = ast_function(file);
-  }
-  ast_print(ast);
-  ast_free(ast);
-
-  fclose(file);
-
-  return 0;
-}
-
 #endif // _PARSER_
