@@ -4,12 +4,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdbool.h>
 
 #define MAX_NAME 100
 
 typedef enum {
   Eof = 0,
   Identifier,
+  Key_Fun,
   LBra,
   LPar,
   Literal,
@@ -19,6 +21,10 @@ typedef enum {
 
 char name[MAX_NAME];
 char text[MAX_NAME];
+
+static bool is_fun(void) {
+  return strcmp(name, "fun") == 0;
+}
 
 int nextToken(FILE *file) {
   return fgetc(file);
@@ -68,30 +74,15 @@ TokenType getToken(FILE *file) {
         } while (isalnum(c) || c == '_');
         name[i] = '\0';
         ungetc(c, file);
+        if (is_fun()) {
+          return Key_Fun;
+        }
         return Identifier;
       } else {
         fprintf(stderr, "Invalid token: %c", c);
         exit(1);
       }
   }
-}
-
-int main(void) {
-  FILE *file = fopen("01-helloworld.kt", "r");
-  if (file == NULL) {
-    fprintf(stderr, "Kotlin file not found");
-    exit(1);
-  }
-
-  TokenType t = getToken(file);
-  while (t != Eof) {
-    printf("Token: %d -> %s -> %s\n", t, name, text);
-    t = getToken(file);
-  }
-
-  fclose(file);
-
-  return 0;
 }
 
 #endif // _LEXER_
